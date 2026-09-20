@@ -1,0 +1,74 @@
+/* ────────────────────────────────────────────────
+   INE Tracker — Design Tokens
+   Palette mirrors the INE Store: white ground,
+   near-black ink, hairline borders, zero radius.
+   Typography: DM Serif Display for hero/headings,
+   Inter for UI. Deliberate restraint.
+   ──────────────────────────────────────────────── */
+
+:root {
+  --ink:      #1a1a1a;
+  --ink-dim:  #6b6b6b;
+  --ink-faint:#b0b0b0;
+  --ground:   #ffffff;
+  --surface:  #f7f7f7;
+  --border:   #e0e0e0;
+  --border-strong: #c0c0c0;
+
+  --success:  #1a7f37;
+  --warning:  #9a6700;
+  --error:    #cf222e;
+
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans:  'Inter', system-ui, sans-serif;
+  --text-sm: 14px;
+  --text-md: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+
+  --transition: 120ms ease;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); }

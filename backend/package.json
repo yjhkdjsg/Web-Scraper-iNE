@@ -1,0 +1,25 @@
+{
+  "name": "ine-tracker-backend",
+  "version": "1.0.0",
+  "description": "INE Product Price Tracker Backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "scrape:headed": "HEADLESS=false node src/scripts/headedRun.js",
+    "scrape:test": "node src/scripts/testScrape.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "playwright": "^1.40.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

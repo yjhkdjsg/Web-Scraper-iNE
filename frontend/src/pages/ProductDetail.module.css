@@ -1,0 +1,258 @@
+.page {}
+
+.back {
+  font-size: 14px;
+  color: var(--ink-dim);
+  cursor: pointer;
+  margin-bottom: 28px;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color var(--transition);
+}
+
+.back:hover { color: var(--ink); }
+
+/* ── Product header ── */
+.productHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.category {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+.name {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 400;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.meta {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--ink-dim);
+}
+
+.headerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.currentPrice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.currentPriceLabel {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+}
+
+.currentPriceValue {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+}
+
+.scrapeBtn {
+  background: var(--ink);
+  color: var(--ground);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 18px;
+  letter-spacing: 0.02em;
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+.scrapeBtn:hover { opacity: 0.8; }
+.scrapeBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Stats row ── */
+.statsRow {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border-right: 1px solid var(--border);
+}
+
+.stat:last-child { border-right: none; }
+
+.statLabel {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+}
+
+.statValue {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.tab, .tabActive {
+  font-size: 15px;
+  padding: 10px 20px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-dim);
+  margin-bottom: -1px;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.tab:hover { color: var(--ink); }
+
+.tabActive {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+  font-weight: 500;
+}
+
+/* ── Chart ── */
+.chartWrap {
+  padding: 8px 0;
+}
+
+/* ── Table ── */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.table thead th {
+  text-align: left;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-dim);
+  font-weight: 500;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition);
+}
+
+.table tbody tr:hover { background: var(--surface); }
+
+.table td {
+  padding: 10px 12px;
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.tdPrice {
+  font-weight: 500;
+}
+
+.tdNote {
+  color: var(--ink-dim);
+  font-size: 14px;
+  max-width: 240px;
+}
+
+/* ── Status badges ── */
+.badgeSuccess {
+  font-size: 13px;
+  color: var(--success);
+  background: #e6f4ea;
+  padding: 2px 7px;
+}
+
+.badgeRetried {
+  font-size: 13px;
+  color: var(--warning);
+  background: #fff5e0;
+  padding: 2px 7px;
+}
+
+.badgeFailed {
+  font-size: 13px;
+  color: var(--error);
+  background: #fce8ea;
+  padding: 2px 7px;
+}
+
+/* ── Empty/loading ── */
+.empty, .loading {
+  padding: 48px 0;
+  font-size: 15px;
+  color: var(--ink-dim);
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .productHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .headerRight {
+    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .statsRow {
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    flex: 1 1 45%;
+    border-bottom: 1px solid var(--border);
+  }
+}
