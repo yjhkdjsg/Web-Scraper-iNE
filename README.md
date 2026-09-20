@@ -2,6 +2,10 @@
 
 A full-stack web application that tracks product prices from the INE mock store. Search for products, add them to your watchlist, and the app scrapes their current price and stock on demand or on a schedule.
 
+**Live Demo**: [Live Website](https://inepricetracker-six.vercel.app/)
+
+**GitHub**: https://github.com/yourusername/ine-tracker
+
 ## Features
 
 - **Product Search**: Live search across 1000 products from the INE store
@@ -80,7 +84,7 @@ Frontend at `http://localhost:5173`
 ## Usage
 
 1. Open the app in your browser
-2. Search for a product (e.g., "laptop")
+2. Search for a product
 3. Click "Track" to add it to your watchlist
 4. Click "Scrape now" to fetch current price and stock
 5. View price history and scrape logs on the product detail page
@@ -89,8 +93,6 @@ Frontend at `http://localhost:5173`
 
 Backend:
 - `npm run dev` - Start dev server
-- `npm run scrape:headed` - Run scraper with visible browser
-- `npm run scrape:test [id]` - Test scraper on single product
 
 Frontend:
 - `npm run dev` - Start dev server
