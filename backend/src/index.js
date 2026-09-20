@@ -8,6 +8,7 @@ const catalogRouter = require('./routes/catalog');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const frontendOrigin = (process.env.FRONTEND_URL || '*').replace(/\/$/, '');
 
 const requiredConfig = ['SUPABASE_URL', 'SUPABASE_SERVICE_KEY', 'CRON_SECRET'];
 const missingConfig = requiredConfig.filter((name) => !process.env[name]);
@@ -18,7 +19,7 @@ if (missingConfig.length > 0) {
 }
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: frontendOrigin,
   methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
