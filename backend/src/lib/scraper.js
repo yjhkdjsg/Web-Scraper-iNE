@@ -168,14 +168,15 @@ function extractRealPriceInBrowser() {
   const block = document.querySelector('.price-block');
   if (!block) return { price: null, raw: null };
 
-  const candidates = Array.from(block.querySelectorAll('.price-main > span'));
+  const candidates = Array.from(block.querySelectorAll('.price-main *'));
   let best = null;
 
   for (const el of candidates) {
     const style = window.getComputedStyle(el);
     if (style.display === 'none') continue;
+    if (style.visibility === 'hidden' || parseFloat(style.opacity) === 0) continue;
     if (style.textDecoration.includes('line-through')) continue;
-    const text = el.textContent || '';
+    const text = (el.textContent || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
     if (/deal price/i.test(text)) continue;
     if (/%\s*off/i.test(text)) continue;
     if (!/(rs\.?|₹)\s*[\d,]+/i.test(text)) continue;
@@ -256,11 +257,12 @@ async function scrapeProduct(productUrl) {
         () => {
           const block = document.querySelector('.price-block');
           if (!block) return false;
-          const spans = Array.from(block.querySelectorAll('.price-main > span'));
-          return spans.some((el) => {
+          const candidates = Array.from(block.querySelectorAll('.price-main *'));
+          return candidates.some((el) => {
             const s = window.getComputedStyle(el);
-            if (s.display === 'none' || s.textDecoration.includes('line-through')) return false;
-            const t = el.textContent || '';
+            if (s.display === 'none' || s.visibility === 'hidden' || parseFloat(s.opacity) === 0) return false;
+            if (s.textDecoration.includes('line-through')) return false;
+            const t = (el.textContent || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
             return !/deal price/i.test(t) && !/%\s*off/i.test(t) && /(rs\.?|₹)\s*[\d,]+/i.test(t);
           });
         },

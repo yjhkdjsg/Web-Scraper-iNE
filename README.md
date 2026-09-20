@@ -1,151 +1,148 @@
-# INE Price Tracker
+# INE Product Price Tracker
 
-Track product prices from the INE mock store.
-# INE Price Tracker
+A full-stack web application that tracks product prices from the INE mock store. Search for products, add them to your watchlist, and the app scrapes their current price and stock on demand or on a schedule.
 
-Track product prices from the INE mock store.
+## Features
+
+- **Product Search**: Live search across 1000 products from the INE store
+- **Price Tracking**: Scrape current price and stock for tracked products
+- **Price History**: View price changes over time with interactive charts
+- **Scrape Logs**: Complete log of all scraping attempts with success/failure status
+- **Robust Scraping**: Handles cookie banners, lazy-loaded prices, decoy elements, and retry logic
+
+## Tech Stack
+
+- Frontend: React 18 + Vite + Recharts
+- Backend: Node.js + Express
+- Database: Supabase (PostgreSQL)
+- Scraping: Playwright (Chromium)
 
 ## Local Setup
 
-### 1. Database Setup
+### Prerequisites
+- Node.js 18+
+- Supabase account (free tier)
 
-Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
+### 1. Database
 
-### 2. Backend Setup
+Create a Supabase project. In the SQL editor, run `supabase/schema.sql`:
+
+```bash
+# Copy supabase/schema.sql content into Supabase SQL editor and execute
+```
+
+### 2. Backend
 
 ```bash
 cd backend
 cp .env.example .env
-# Edit .env with your Supabase credentials
-npm install
-npx playwright install chromium
+```
 
-### Render deployment with Docker
-
-The backend uses Playwright, so deploy it on Render as a Docker Web Service:
-
-- Root directory: `backend`
-- Dockerfile path: `Dockerfile`
-- Health check path: `/health`
-
-The repository includes `backend/Dockerfile`, based on the official
-`mcr.microsoft.com/playwright:v1.63.0-jammy` image. That image already contains
-the Linux libraries and browser runtime required by Playwright. Do not use
-`FROM ://microsoft.com`; the complete image name must include the `mcr` host
-and image tag.
-
-Set the following variables in Render's Environment tab. Do not commit them or
-put them in the Dockerfile:
-
-```env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=sb_secret_your_server_key
-CRON_SECRET=your_long_random_cron_secret
-FRONTEND_URL=https://your-frontend.vercel.app
+Edit `.env`:
+```
+PORT=3001
+SUPABASE_URL=your-project-url
+SUPABASE_SERVICE_KEY=your-service-role-key
+CRON_SECRET=any-random-string
+FRONTEND_URL=http://localhost:5173
 HEADLESS=true
 ```
 
-Render supplies `PORT` automatically. After changing environment variables,
-redeploy or restart the service. Keep `SUPABASE_SERVICE_KEY` server-side only;
-never add it to the frontend or `VITE_*` variables.
+Install and run:
+```bash
+npm install
+npx playwright install chromium
 npm run dev
 ```
 
-Backend runs at http://localhost:3001
+Backend at `http://localhost:3001`
 
-### 3. Frontend Setup
+### 3. Frontend
 
 ```bash
 cd frontend
 cp .env.example .env
-# Set VITE_API_URL=http://localhost:3001
+```
+
+Edit `.env`:
+```
+VITE_API_URL=http://localhost:3001
+```
+
+Install and run:
+```bash
 npm install
 npm run dev
 ```
 
-Frontend runs at http://localhost:5173
+Frontend at `http://localhost:5173`
 
 ## Usage
 
-1. Search for products (live search, takes a few seconds)
-2. Click "Track" to add products
-3. Click "Scrape now" to get price and stock
-4. View price history and scrape logs
-
-## Scheduled scraping
-
-Configure an external cron service such as cron-job.org to send the tracked
-price job every 2 hours:
-
-```text
-POST https://<render-backend>/api/scrape/run
-Authorization: Bearer <CRON_SECRET>
-```
-
-Run it every 2 hours. The backend processes tracked products sequentially. Each
-product navigation is retried up to three times with exponential backoff. A
-successful scrape writes price history, the tracked product snapshot, and a
-success/retried log entry. A failed scrape writes a failed log entry and never
-overwrites the last known price or stock.
-
-The search catalog is crawled from the INE store and cached in memory for 15
-minutes. An exhausted catalog-page retry fails the search rather than returning
-an incomplete catalog.
-
-Configure a second, lower-frequency cron job for catalog discovery:
-
-```text
-POST https://<render-backend>/api/catalog/refresh
-Authorization: Bearer <CRON_SECRET>
-```
-
-Run it daily or every 6-12 hours. It crawls the storefront listing pages and
-upserts product names, brands, categories, SKUs, and real product links into
-`product_catalog`. User search reads this table and does not crawl the store.
-The first search after a fresh database can bootstrap the catalog automatically;
-later no-match searches remain database-only.
-
-## Environment variables
-
-Backend (`backend/.env`):
-
-- `PORT` - Render-provided HTTP port (defaults to `3001` locally)
-- `SUPABASE_URL` - Supabase project URL
-- `SUPABASE_SERVICE_KEY` - Supabase service-role key; keep this server-side
-- `CRON_SECRET` - shared secret for the scheduled scrape endpoint
-- `FRONTEND_URL` - deployed frontend origin for CORS
-- `HEADLESS` - leave unset for unattended runs; set to `false` for a visible run
-
-Frontend (`frontend/.env`):
-
-- `VITE_API_URL` - backend base URL, for example `http://localhost:3001`
-
-If the database already has the previous schema, rerun `supabase/schema.sql` to
-create the new `product_catalog` table and its indexes before using catalog
-search.
+1. Open the app in your browser
+2. Search for a product (e.g., "laptop")
+3. Click "Track" to add it to your watchlist
+4. Click "Scrape now" to fetch current price and stock
+5. View price history and scrape logs on the product detail page
 
 ## Scripts
 
 Backend:
-- `npm run dev` - Start server
+- `npm run dev` - Start dev server
 - `npm run scrape:headed` - Run scraper with visible browser
-- `npm run scrape:test` - Test scraper on single product
+- `npm run scrape:test [id]` - Test scraper on single product
 
 Frontend:
 - `npm run dev` - Start dev server
 - `npm run build` - Build for production
 
-## Reliability design note
+## How It Works
 
-The store uses delayed rendering, decoy price values, and a mouse-gated price
-reveal. The scraper waits for the detail shell, simulates spaced pointer
-movement over the price block, waits for an eligible visible price, ignores
-hidden and crossed-out decoys, and validates that the extracted value is
-positive. Navigation and extraction retry independently at the browser-run
-level. Database write errors are treated as scrape failures, so the API cannot
-claim success while history or the current snapshot was lost.
+### Search
+Live search crawls the first 5-50 pages of the store and filters by product name.
 
-The trade-off is Playwright rather than lightweight HTTP parsing: the store's
-interaction and asynchronous rendering make a browser the more reliable
-choice. The headed script uses the same scraper path with `HEADLESS=false` so
-the recorded run demonstrates the production behavior.
+### Scraping
+- Handles cookie consent overlay
+- Waits for "Reveal price" button to become enabled
+- Extracts real price by filtering decoy elements (hidden, struck-through, labels)
+- Validates by clicking "Refresh price"
+- Retries up to 3 times with exponential backoff on failure
+- Logs all attempts honestly (success, retried, or failed)
+
+### Database
+- `tracked_products`: Products you're monitoring
+- `price_history`: All price/stock readings
+- `scrape_logs`: Complete scrape attempt history
+
+## API
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/health` | Health check |
+| GET | `/api/products` | List tracked products |
+| GET | `/api/products/search?q=` | Search products |
+| POST | `/api/products` | Start tracking |
+| DELETE | `/api/products/:id` | Stop tracking |
+| POST | `/api/scrape/:id` | Scrape one product |
+| GET | `/api/history/:id/prices` | Price history |
+| GET | `/api/history/:id/logs` | Scrape logs |
+
+## Deployment
+
+### Frontend (Vercel)
+- Set `VITE_API_URL` to your backend URL
+
+### Backend (Render)
+- Build: `npm install && npx playwright install chromium --with-deps`
+- Start: `npm start`
+- Set all environment variables
+
+### Scheduled Scraping
+Use cron-job.org to trigger `POST /api/scrape/run` every 2 hours.
+
+## Local Development Notes
+
+- Search takes 2-3 minutes on first query (crawls all pages)
+- Each scrape takes 10-30 seconds depending on store response
+- Run `npm run scrape:headed` to watch the scraper in action
+- Check backend console for detailed logs
