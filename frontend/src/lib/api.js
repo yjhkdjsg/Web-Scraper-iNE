@@ -6,7 +6,7 @@ async function req(path, options = {}) {
     ...options,
   });
   const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Request failed');
+  if (!res.ok) throw new Error(json.detail || json.error || 'Request failed');
   return json;
 }
 

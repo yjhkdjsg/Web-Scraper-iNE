@@ -9,6 +9,14 @@ const catalogRouter = require('./routes/catalog');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const requiredConfig = ['SUPABASE_URL', 'SUPABASE_SERVICE_KEY', 'CRON_SECRET'];
+const missingConfig = requiredConfig.filter((name) => !process.env[name]);
+if (missingConfig.length > 0) {
+  console.error(`[config] Missing required environment variables: ${missingConfig.join(', ')}`);
+} else {
+  console.log('[config] Supabase and cron configuration loaded');
+}
+
 app.use(cors({
   origin: process.env.FRONTEND_URL || '*',
   methods: ['GET', 'POST', 'DELETE'],
@@ -18,7 +26,11 @@ app.use(express.json());
 
 // Health check — keeps Render warm
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', ts: new Date().toISOString() });
+  res.json({
+    status: missingConfig.length === 0 ? 'ok' : 'misconfigured',
+    ts: new Date().toISOString(),
+    config: { missing: missingConfig },
+  });
 });
 
 app.use('/api/products', productsRouter);
